@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mohammed Ibrahim: COVID-19 & Crime Analysis</title>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #2c2c2c;
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe8cc 100%);
+            overflow-x: hidden;
+        }
+
+        /* Fixed Top Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .nav-logo {
+            color: white;
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+
+        .nav-dots {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: white;
+            transform: scale(1.5);
+        }
+
+        .nav-arrows {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-arrow {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-arrow:hover {
+            background: white;
+            color: #FF6B35;
+        }
+
+        .nav-arrow.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            padding: 100px 30px 80px;
+            text-align: center;
+            background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 50%, #FFB84D 100%);
+            color: white;
+            margin-bottom: 0;
+        }
+
+        .hero-title {
+            font-size: 3.5em;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3em;
+            font-weight: 300;
+            margin-bottom: 50px;
+            opacity: 0.95;
+        }
+
+        /* Key Statistics */
+        .key-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .stat-icon {
+            margin-bottom: 15px;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        /* Slideshow Container */
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            min-height: 100vh;
+        }
+
+        .slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+            padding: 60px 30px;
+            min-height: 100vh;
+        }
+
+        .slide.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .slide-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 60px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .slide-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 3px solid #FFB84D;
+        }
+
+        .slide-number {
+            background: linear-gradient(135deg, #FF6B35, #FF8C42);
+            color: white;
+            font-size: 2.5em;
+            font-weight: 800;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 30px;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .slide-title-wrapper {
+            flex: 1;
+        }
+
+        .slide-title {
+            font-size: 2.5em;
+            color: #FF6B35;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .slide-icon {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #FF8C42;
+            font-size: 1.1em;
+        }
+
+        .slide-description {
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 40px;
+            text-align: justify;
+        }
+
+        .viz-container {
+            margin: 40px 0;
+            padding: 30px;
+            background: #fafafa;
+            border-radius: 15px;
+            border: 2px solid #ffe8cc;
+        }
+
+        .insight-box {
+            background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin-top: 40px;
+        }
+
+        .insight-box h3 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .insight-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .insight-list li {
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .insight-list li:last-child {
+            border-bottom: none;
+        }
+
+        .insight-list li::before {
+            content: '▸ ';
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        /* Q&A Section */
+        .qa-section {
+            background: #f8f9fa;
+            padding: 40px;
+            border-radius: 15px;
+            margin-top: 40px;
+            border-left: 5px solid #FF6B35;
+        }
+
+        .qa-item {
+            margin-bottom: 30px;
+        }
+
+        .qa-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .qa-question {
+            font-size: 1.3em;
+            color: #FF6B35;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .qa-answer {
+            font-size: 1.1em;
+            line-height: 1.7;
+            color: #555;
+            padding-left: 35px;
+        }
+
+        .qa-answer strong {
+            color: #FF6B35;
+        }
+
+        .qa-answer ul {
+            margin-top: 15px;
+            padding-left: 20px;
+        }
+
+        .qa-answer li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        /* Conclusion Section */
+        .conclusion-section {
+            background: white;
+            padding: 80px 30px;
+            text-align: center;
+        }
+
+        .conclusion-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .conclusion-content h2 {
+            font-size: 2.8em;
+            color: #FF6B35;
+            margin-bottom: 30px;
+        }
+
+        .conclusion-content p {
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 40px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #FF6B35, #FF8C42);
+            color: white;
+            padding: 18px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Footer */
+        footer {
+            background: #2c2c2c;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        footer p {
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+
+        .author {
+            font-weight: 700;
+            color: #FFB84D;
+            font-size: 1.3em;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.2em;
+            }
+
+            .key-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .slide-content {
+                padding: 30px 20px;
+            }
+
+            .slide-number {
+                width: 60px;
+                height: 60px;
+                font-size: 2em;
+            }
+
+            .slide-title {
+                font-size: 1.8em;
+            }
+
+            .nav-dots {
+                display: none;
+            }
+
+            .nav-logo {
+                font-size: 1em;
+            }
+        }
+
+        /* Print Friendly */
+        @media print {
+            .top-nav,
+            .nav-arrows,
+            .cta-buttons {
+                display: none !important;
+            }
+
+            .slide {
+                display: block !important;
+                opacity: 1 !important;
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fixed Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-logo">Mohammed Ibrahim</div>
+        <div class="nav-dots">
+            <div class="nav-dot active" onclick="goToSlide(0)"></div>
+            <div class="nav-dot" onclick="goToSlide(1)"></div>
+            <div class="nav-dot" onclick="goToSlide(2)"></div>
+            <div class="nav-dot" onclick="goToSlide(3)"></div>
+        </div>
+        <div class="nav-arrows">
+            <div class="nav-arrow" id="prevBtn" onclick="changeSlide(-1)">
+                <i data-feather="chevron-left"></i>
+            </div>
+            <div class="nav-arrow" id="nextBtn" onclick="changeSlide(1)">
+                <i data-feather="chevron-right"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1 class="hero-title">Mohammed Ibrahim</h1>
+        <p class="hero-subtitle">COVID-19 Impact Analysis: From Local Crime to Global Pandemic</p>
+        
+        <div class="key-stats">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i data-feather="map-pin" width="40" height="40"></i>
+                </div>
+                <div class="stat-number">12</div>
+                <div class="stat-label">Districts Analyzed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i data-feather="trending-up" width="40" height="40"></i>
+                </div>
+                <div class="stat-number">+50%</div>
+                <div class="stat-label">Park Visit Increase</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i data-feather="shield" width="40" height="40"></i>
+                </div>
+                <div class="stat-number">93%</div>
+                <div class="stat-label">MA Vaccination Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i data-feather="globe" width="40" height="40"></i>
+                </div>
+                <div class="stat-number">USA</div>
+                <div class="stat-label">Top COVID Cases</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slideshow Container -->
+    <div class="slideshow-container">
+        <!-- Slide 1: Crime Analysis -->
+        <div class="slide active">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <div class="slide-number">1</div>
+                    <div class="slide-title-wrapper">
+                        <h2 class="slide-title">Crime Analysis of Boston City</h2>
+                        <div class="slide-icon">
+                            <i data-feather="alert-circle"></i>
+                            <span>Crime Patterns Across 12 Districts</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="slide-description">
+                    Our investigation begins on the streets of Boston, where crime patterns reveal fascinating insights across twelve distinct districts. The visualization exposes seasonal rhythms in criminal activity, with summer months (May–August) consistently showing elevated crime rates across most districts. Districts B2 and A1 emerge as persistent hotspots with consistently higher crime counts throughout the year, while A15 and E5 maintain notably lower rates. The multi-grid layout allows for granular temporal analysis, preserving each district's unique crime signature while enabling cross-district comparisons. These patterns suggest environmental and social factors that influence criminal behavior—from weather conditions to community events—providing crucial intelligence for resource allocation and preventative policing strategies. Understanding these district-specific trends is essential for developing targeted interventions that address the root causes of crime in each neighborhood.
+                </p>
+
+                <div class="viz-container">
+                    <div class="flourish-embed flourish-chart" data-src="visualisation/25986081"><script src="https://public.flourish.studio/resources/embed.js"></script><noscript><img src="https://public.flourish.studio/visualisation/25986081/thumbnail" width="100%" alt="chart visualization" /></noscript></div>
+                </div>
+
+                <div class="insight-box">
+                    <h3><i data-feather="lightbulb"></i> Key Insights</h3>
+                    <ul class="insight-list">
+                        <li><strong>Seasonal Crime Spikes:</strong> Summer months (May–August) show noticeable increases in crime across most districts, suggesting weather and outdoor activity influence criminal opportunities.</li>
+                        <li><strong>District Disparities:</strong> B2 and A1 consistently report the highest crime counts, while A15 and E5 maintain significantly lower rates, indicating varying socioeconomic and demographic factors.</li>
+                        <li><strong>Temporal Patterns:</strong> Crime rates decline toward year-end in most districts, revealing potential impacts of holiday seasons, weather conditions, and community interventions.</li>
+                        <li><strong>Visualization Strength:</strong> The multi-grid layout effectively preserves each district's unique crime pattern while enabling comparative analysis across all twelve areas.</li>
+                    </ul>
+                </div>
+
+                <div class="qa-section">
+                    <div class="qa-item">
+                        <div class="qa-question">
+                            <i data-feather="help-circle"></i>
+                            <span>Give alternate visualization ideas to present this information</span>
+                        </div>
+                        <div class="qa-answer">
+                            <ul>
+                                <li><strong>Heatmap:</strong> Display districts on the Y-axis and months on the X-axis, with color intensity representing crime count. This makes it easy to spot high-crime months and district hotspots briefly.</li>
+                                <li><strong>Stacked Area Chart:</strong> Combine all districts to show how total crime volume changes over time and how each district contributes to it.</li>
+                                <li><strong>Interactive Map (Choropleth):</strong> Plot districts geographically with month-based sliders to visualize spatial and temporal crime variations.</li>
+                                <li><strong>Clustered Line Chart:</strong> Instead of separate grids, overlay similar districts on one chart using color coding to emphasize trend similarities.</li>
+                                <li><strong>Animated Race Chart:</strong> Show how district crime rankings change month to month to highlight relative shifts.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="qa-question">
+                            <i data-feather="help-circle"></i>
+                            <span>What are the drawbacks of this visualization?</span>
+                        </div>
+                        <div class="qa-answer">
+                            <ul>
+                                <li>With many small multiples, viewers may find it difficult to compare exact values across districts.</li>
+                                <li>If the Y-axis scales differ for each grid, it may distort comparisons between districts.</li>
+                                <li>The visualization lacks contextual insights (e.g., population size or type of crime), which could help explain observed trends.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Mobility Changes -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <div class="slide-number">2</div>
+                    <div class="slide-title-wrapper">
+                        <h2 class="slide-title">Changes in Mobility Patterns</h2>
+                        <div class="slide-icon">
+                            <i data-feather="activity"></i>
+                            <span>Post-Pandemic Movement Trends</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="slide-description">
+                    The pandemic fundamentally reshaped how people move through their communities, creating lasting behavioral shifts that ripple through crime statistics. This visualization tracks mobility across six critical sectors—each telling a story of adaptation and transformation. Retail and recreation spaces see 8% below-baseline movement, reflecting permanent changes in shopping habits and entertainment preferences. Transit stations show an 11% decline, suggesting remote work's enduring impact on commuting patterns. Workplaces remain 9% below baseline, confirming the hybrid work revolution. Most strikingly, parks experience a dramatic 50% surge, revealing a societal shift toward outdoor activities and open spaces. These mobility patterns directly influence crime opportunities—empty transit stations and reduced retail foot traffic alter the landscape of potential criminal activity, while increased park usage changes the dynamics of public space safety and community presence.
+                </p>
+
+                <div class="viz-container">
+                    <div class="flourish-embed flourish-chart" data-src="visualisation/25980652"><script src="https://public.flourish.studio/resources/embed.js"></script><noscript><img src="https://public.flourish.studio/visualisation/25980652/thumbnail" width="100%" alt="chart visualization" /></noscript></div>
+                </div>
+
+                <div class="insight-box">
+                    <h3><i data-feather="lightbulb"></i> Key Insights</h3>
+                    <ul class="insight-list">
+                        <li><strong>Uneven Recovery:</strong> Mobility has rebounded unevenly across sectors, with recreation and workplaces still below baseline while outdoor spaces surge dramatically.</li>
+                        <li><strong>Parks Surge (+50%):</strong> The dramatic increase in park visits reflects post-pandemic lifestyle changes favoring outdoor activities, open spaces, and nature-based recreation.</li>
+                        <li><strong>Transit Decline (-11%):</strong> Reduced public transportation usage indicates lasting shifts toward remote work and personal vehicle preference, fundamentally altering urban movement patterns.</li>
+                        <li><strong>Crime Implications:</strong> These mobility shifts directly affect crime opportunities—empty transit stations and reduced retail foot traffic change where and how criminal activity occurs.</li>
+                    </ul>
+                </div>
+
+                <div class="qa-section">
+                    <div class="qa-item">
+                        <div class="qa-question">
+                            <i data-feather="help-circle"></i>
+                            <span>Give alternate visualization ideas to present this information</span>
+                        </div>
+                        <div class="qa-answer">
+                            A better way to present these mobility trends could have been:
+                            <ul>
+                                <li><strong>Separate Area Charts or Small Multiples:</strong> Use individual area charts for each category (Retail, Parks, Transit, etc.) arranged in a grid layout. This allows easy comparison of patterns and volatility across sectors over time.</li>
+                                <li><strong>Consistent Scaling:</strong> Each chart can share the same y-axis scale and color theme for consistency, helping viewers quickly identify which sectors deviated most from the baseline.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: COVID Vaccinations -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <div class="slide-number">3</div>
+                    <div class="slide-title-wrapper">
+                        <h2 class="slide-title">COVID Vaccination Across USA</h2>
+                        <div class="slide-icon">
+                            <i data-feather="shield"></i>
+                            <span>State-by-State Immunization Progress</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="slide-description">
+                    The vaccination campaign reveals striking regional disparities in America's pandemic response. At the forefront, Massachusetts, Rhode Island, and Connecticut achieved remarkable vaccination rates exceeding 93%, demonstrating aggressive public health campaigns and high community compliance. In stark contrast, Wyoming, Idaho, and Mississippi lag below 62%, exposing deep divides in healthcare access, vaccine hesitancy, and public health infrastructure. The binned color scheme effectively categorizes states into clear performance tiers, preventing extreme values from distorting the visualization while making geographic patterns immediately apparent. These vaccination disparities correlate with broader socioeconomic indicators—education levels, political affiliations, urban-rural divides, and healthcare infrastructure quality. Understanding these patterns is crucial for targeted public health interventions and reveals how pandemic preparedness and response capabilities vary dramatically across American states, with direct implications for disease control and community resilience.
+                </p>
+
+                <div class="viz-container">
+                    <div class="flourish-embed flourish-map" data-src="visualisation/25981295"><script src="https://public.flourish.studio/resources/embed.js"></script><noscript><img src="https://public.flourish.studio/visualisation/25981295/thumbnail" width="100%" alt="map visualization" /></noscript></div>
+                </div>
+
+                <div class="insight-box">
+                    <h3><i data-feather="lightbulb"></i> Key Insights</h3>
+                    <ul class="insight-list">
+                        <li><strong>Regional Leaders:</strong> Massachusetts, Rhode Island, and Connecticut lead the nation with 93%+ vaccination rates, showcasing effective public health infrastructure and community engagement.</li>
+                        <li><strong>Lagging States:</strong> Wyoming, Idaho, and Mississippi remain below 62%, highlighting persistent challenges with vaccine access, hesitancy, and public health resources in certain regions.</li>
+                        <li><strong>Geographic Patterns:</strong> Clear regional clusters emerge—Northeast states show high vaccination rates while certain rural and Southern states lag, reflecting underlying socioeconomic and political factors.</li>
+                        <li><strong>Visualization Design:</strong> The binned color scheme effectively groups states into performance tiers, preventing million-count outliers from skewing the scale and making patterns immediately interpretable.</li>
+                    </ul>
+                </div>
+
+                <div class="qa-section">
+                    <div class="qa-item">
+                        <div class="qa-question">
+                            <i data-feather="help-circle"></i>
+                            <span>Do you agree with the color scheme used? I have used binned color scheme. Should I use continuous color scheme?</span>
+                        </div>
+                        <div class="qa-answer">
+                            <strong>Yes, I agree with using a binned color scheme.</strong>
+                            <br><br>
+                            This is because the vaccination numbers vary widely across states — most fall between 300k–650k, but a few states have values in the millions. Using a binned color scale helps categorize states into clear groups and prevents the few very high values from skewing the color range. It also makes the map easier to interpret visually, as each bin distinctly represents a meaningful range rather than small continuous differences.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Global COVID Cases -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <div class="slide-number">4</div>
+                    <div class="slide-title-wrapper">
+                        <h2 class="slide-title">COVID-19 Cases Across The Globe</h2>
+                        <div class="slide-icon">
+                            <i data-feather="globe"></i>
+                            <span>Pandemic's Global Trajectory</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="slide-description">
+                    The pandemic's global story unfolds through this dynamic racing visualization, beginning with China's first reported death in January 2020 and the subsequent Wuhan lockdown that marked the world's first massive containment effort. As the WHO declared a global emergency, the virus spread with devastating speed across continents. Remarkably, the United States emerged with the highest active case count, followed by India, while China—the pandemic's origin—ultimately recorded the lowest numbers among major nations through aggressive zero-COVID policies. The timeline captures humanity's response: Pfizer's groundbreaking 90% vaccine efficacy announcement, the UK's historic first vaccine approval, and America's mass vaccination campaign launch. Yet challenges persisted—Delta and Omicron variants tested global defenses, requiring renewed lockdowns and booster campaigns. This visualization tells the complete arc of a global health crisis, from initial outbreak through vaccine development to the ongoing battle for pandemic control and societal recovery.
+                </p>
+
+                <div class="viz-container">
+                    <div class="flourish-embed flourish-bar-chart-race" data-src="visualisation/25983336"><script src="https://public.flourish.studio/resources/embed.js"></script><noscript><img src="https://public.flourish.studio/visualisation/25983336/thumbnail" width="100%" alt="bar-chart-race visualization" /></noscript></div>
+                </div>
+
+                <div class="insight-box">
+                    <h3><i data-feather="lightbulb"></i> Key Insights</h3>
+                    <ul class="insight-list">
+                        <li><strong>USA Leads Cases:</strong> The United States emerged with the highest active positive cases globally, despite advanced healthcare infrastructure, reflecting challenges in coordinated response and population density.</li>
+                        <li><strong>China's Paradox:</strong> China, where the pandemic originated, ended with the lowest case counts through aggressive zero-COVID lockdowns and mass testing—though at significant social and economic costs.</li>
+                        <li><strong>Vaccine Breakthrough:</strong> Pfizer's 90% efficacy announcement and subsequent global vaccine rollout marked a turning point, enabling mass immunization campaigns that brought the pandemic under control.</li>
+                        <li><strong>Variant Challenges:</strong> Delta and Omicron variants demonstrated the virus's ability to evolve, requiring renewed public health responses, booster campaigns, and adaptive strategies for ongoing pandemic management.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conclusion Section -->
+    <section class="conclusion-section">
+        <div class="conclusion-content">
+            <h2>Why This Matters</h2>
+            <p>
+                The COVID-19 pandemic didn't just change our health—it transformed how we live, move, and interact with our communities. By examining crime patterns alongside mobility shifts, vaccination campaigns, and global case trajectories, we uncover the intricate connections between public health crises and urban safety. Boston's crime fluctuations reflect broader societal changes: empty streets alter criminal opportunities, remote work reshapes daily routines, and park surges indicate new community behaviors. These insights empower policymakers, law enforcement, and public health officials to develop data-driven strategies that address not just immediate challenges, but the lasting societal transformations triggered by global health emergencies.
+            </p>
+            
+            <div class="cta-buttons">
+                <a href="#" class="cta-button" onclick="window.print(); return false;">
+                    <i data-feather="printer"></i>
+                    Print Report
+                </a>
+                <a href="#" class="cta-button" onclick="goToSlide(0); return false;">
+                    <i data-feather="refresh-cw"></i>
+                    Restart Story
+                </a>
+                <a href="mailto:?subject=COVID-19 Crime Analysis" class="cta-button">
+                    <i data-feather="share-2"></i>
+                    Share Story
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p class="author">Ibrahim</p>
+        <p>Data Storytelling Workshop | November 2025</p>
+        <p>Prof. Dehghani's Course | Northeastern University</p>
+    </footer>
+
+    <script>
+        // Initialize Feather Icons
+        feather.replace();
+
+        // Slideshow functionality
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.nav-dot');
+
+        function showSlide(n) {
+            if (n >= slides.length) { currentSlide = slides.length - 1; }
+            if (n < 0) { currentSlide = 0; }
+            
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+            
+            dots.forEach(dot => {
+                dot.classList.remove('active');
+            });
+            
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+            
+            // Update navigation arrows
+            updateArrows();
+            
+            // Reinitialize Feather icons for the new slide
+            feather.replace();
+            
+            // Scroll to top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            if (currentSlide >= slides.length) { currentSlide = slides.length - 1; }
+            if (currentSlide < 0) { currentSlide = 0; }
+            showSlide(currentSlide);
+        }
+
+        function goToSlide(n) {
+            currentSlide = n;
+            showSlide(currentSlide);
+        }
+
+        function updateArrows() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (currentSlide === 0) {
+                prevBtn.classList.add('disabled');
+            } else {
+                prevBtn.classList.remove('disabled');
+            }
+            
+            if (currentSlide === slides.length - 1) {
+                nextBtn.classList.add('disabled');
+            } else {
+                nextBtn.classList.remove('disabled');
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (e.key === 'ArrowRight') {
+                changeSlide(1);
+            }
+        });
+
+        // Initialize
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>
